@@ -14,6 +14,11 @@ bot.get_updates(fail_silently: true) do |message|
       reply.text = "All I can do is say hello. Try the /greet command."
     when /greet/i
       reply.text = "Hello, #{message.from.first_name}. 🤖"
+    when /fuck/i
+      reply.text = "Fuck off #{message.from.first_name} 🤖"
+    when /gg/i
+      greetings = ['bonjour', 'hola', 'hallo', 'sveiki', 'namaste', 'salaam', 'szia', 'halo', 'ciao']
+      reply.text = "#{greetings.sample.capitalize}, #{message.from.first_name}!"
     else
       reply.text = "I have no idea what #{command.inspect} means."
     end
