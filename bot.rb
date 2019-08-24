@@ -1,4 +1,7 @@
 require 'telegram_bot'
+require "open-uri"
+require 'json'
+require 'csv'
 
 token ='961383937:AAE4iNclJMUyzkEmZjcF8aWaTFuz-PXuc4U'
 
@@ -10,15 +13,11 @@ bot.get_updates(fail_silently: true) do |message|
 
   message.reply do |reply|
     case command
-    when /start/i
-      reply.text = "All I can do is say hello. Try the /greet command."
-    when /greet/i
-      reply.text = "Hello, #{message.from.first_name}. 🤖"
-    when /fuck/i
-      reply.text = "Fuck off #{message.from.first_name} 🤖"
-    when /gg/i
-      greetings = ['bonjour', 'hola', 'hallo', 'sveiki', 'namaste', 'salaam', 'szia', 'halo', 'ciao']
-      reply.text = "#{greetings.sample.capitalize}, #{message.from.first_name}!"
+    when command
+      data = CSV.parse(message.text)
+      resString = JSON.parse(URI.parse("https://api.datamuse.com/words?rel_rhy=#{data[0][0]}&max=#{data[0][1]}").read)
+      puts message.text
+      reply.text = "#{resString}"
     else
       reply.text = "I have no idea what #{command.inspect} means."
     end
