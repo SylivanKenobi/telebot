@@ -1,18 +1,10 @@
 require 'telegram_bot'
 require "open-uri"
 require 'json'
-require 'csv'
 
-token ='961383937:AAE4iNclJMUyzkEmZjcF8aWaTFuz-PXuc4U'
+token ='749626093:AAEoZvrbrULyjEMIsLFT7IpiHAP-DCNy-h0'
 
-re1='.*?'	# Non-greedy match on filler
-re2='(?:[a-z][a-z]+)'	# Uninteresting: word
-re3='.*?'	# Non-greedy match on filler
-re4='((?:[a-z][a-z]+))'	# Word 1
-re=(re1+re2+re3+re4)
-m=Regexp.new(re,Regexp::IGNORECASE);
 bot = TelegramBot.new(token: token)
-result = ""
 
 bot.get_updates(fail_silently: true) do |message|
   puts "@#{message.from.username}: #{message.text}"
@@ -23,8 +15,14 @@ bot.get_updates(fail_silently: true) do |message|
     when /start/i
       reply.text = "All I can do is rhyme. Sent me a word I'll rhyme it."
     else
-      data = CSV.parse(message.text)
-      resString = JSON.parse(URI.parse("https://api.datamuse.com/words?rel_rhy=#{data[0][0]}&max=5").read)
+      result = ""
+      resString = JSON.parse(URI.parse("https://api.datamuse.com/words?rel_rhy=#{message.text}&max=5").read)
+      if resString.empty?
+        reply.text = "Nothing rhymes with #{message.text}"
+        puts "sending #{reply.text.inspect} to @#{message.from.username}"
+        reply.send_with(bot)
+        break
+      end
       resString.each do |i|
         puts i["word"]
         result += i["word"] +  "\n"
