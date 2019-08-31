@@ -13,7 +13,7 @@ bot.get_updates(fail_silently: true) do |message|
     message.reply do |reply|
     case command
     when /start/i
-      reply.text = "All I can do is rhyme. Sent me a word I'll rhyme it."
+      reply.text = "All I can do is rhyme. Send me a word I'll rhyme it."
     else
       result = ""
       resString = JSON.parse(URI.parse("https://api.datamuse.com/words?rel_rhy=#{message.text}&max=5").read)
